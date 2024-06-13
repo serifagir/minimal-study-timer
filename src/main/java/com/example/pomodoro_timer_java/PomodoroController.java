@@ -34,6 +34,8 @@ public class PomodoroController {
     @FXML private int longBreakTime;
     @FXML private int sessionCount;
 
+    @FXML private boolean autoStartNextSession;
+
     @FXML private RadioButton autoStartRadioButton;
 
     private Timer timer ;
@@ -47,6 +49,8 @@ public class PomodoroController {
     FontIcon startIcon = new FontIcon("bi-play");
 
     Preferences preferences = Preferences.userRoot();
+
+
 
     public void initialize() {
         studyTimeSlider.setValue(preferences.getInt("studyTimePrefValue", 25));
@@ -64,6 +68,9 @@ public class PomodoroController {
         sessionCountSlider.setValue(preferences.getInt("sessionCountPrefValue", 4));
         sessionCountSliderLabel.setText(Integer.toString((int)sessionCountSlider.getValue()));
         sessionCount = (int) sessionCountSlider.getValue();
+
+        autoStartRadioButton.setSelected(preferences.getBoolean("autoStartPrefValue", false));
+        autoStartNextSession = autoStartRadioButton.isSelected();
 
 
         isStudyTimeRunning = false;
@@ -103,7 +110,7 @@ public class PomodoroController {
     @FXML protected void sessionHandler() {
         if(currentSessionCount == 2 * sessionCount) {
             currentSessionCount = 0;
-            seconds = studyTime * 60;
+            seconds = studyTime * 5;
             Platform.runLater(new Runnable() {
                 @Override
                 public void run() {
@@ -113,7 +120,7 @@ public class PomodoroController {
             });
         }  else {
             if (currentSessionCount % 2 == 0) {
-                seconds = studyTime * 1;
+                seconds = studyTime * 5;
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
@@ -123,7 +130,7 @@ public class PomodoroController {
                 });
                 skipSessionButton.setVisible(false);
             } else if (currentSessionCount % 2 == 1 && currentSessionCount != 2 * sessionCount - 1 ) {
-                seconds = shortBreakTime * 10;
+                seconds = shortBreakTime * 1;
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
@@ -133,7 +140,7 @@ public class PomodoroController {
                 });
                 skipSessionButton.setVisible(true);
             } else if (currentSessionCount == 2 * sessionCount - 1 ) {
-                seconds = longBreakTime * 60;
+                seconds = longBreakTime * 1;
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
@@ -155,6 +162,9 @@ public class PomodoroController {
         });
         seconds--;
         if(seconds == 0) {
+            if (sessionCount % 2 == 0) {
+
+            }
             jumpNextSession();
         }
     }
@@ -163,17 +173,19 @@ public class PomodoroController {
         handleSessionCountBar((double)1/sessionCount);
         currentSessionCount++;
         sessionHandler();
-        isTimerRunning = false;
-        timer.cancel();
-        timer.purge();
-        timerTask.cancel();
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                startButton.setGraphic(startIcon);
-            }
-        });
-        isStudyTimeRunning = false;
+        if(autoStartNextSession) {
+            isTimerRunning = false;
+            timer.cancel();
+            timer.purge();
+            timerTask.cancel();
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    startButton.setGraphic(startIcon);
+                }
+            });
+            isStudyTimeRunning = false;
+        }
         studyTimeSlider.setDisable(false);
         shortBreakTimeSlider.setDisable(false);
         longBreakTimeSlider.setDisable(false);
@@ -191,9 +203,6 @@ public class PomodoroController {
             double prevVal = sessionProgressBar.getProgress();
             sessionProgressBar.setProgress(prevVal + valueToAdd);
         }
-//        if (currentSessionCount == 0) {
-//            sessionProgressBar.setProgress(0);
-//        }
     }
 
     @FXML protected void skipForward() {
@@ -266,5 +275,6 @@ public class PomodoroController {
         sessionHandler();
     }
 
+    @FXML protected void saveValueToDb() {}
 
 }

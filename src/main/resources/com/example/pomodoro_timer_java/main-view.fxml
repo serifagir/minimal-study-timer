@@ -84,7 +84,7 @@
                               <VBox prefHeight="200.0" prefWidth="100.0">
                                  <children>
                                     <Label text="Study Time" />
-                                    <Slider fx:id="studyTimeSlider" blockIncrement="5.0" max="180.0" onDragDetected="#setStudyTime" onMouseClicked="#setStudyTime" onMouseDragged="#setStudyTime" />
+                                    <Slider fx:id="studyTimeSlider" blockIncrement="5.0" max="180.0" min="15.0" onDragDetected="#setStudyTime" onMouseClicked="#setStudyTime" onMouseDragged="#setStudyTime" />
                                  </children>
                               </VBox>
                               <VBox prefHeight="200.0" prefWidth="100.0" GridPane.rowIndex="1">
