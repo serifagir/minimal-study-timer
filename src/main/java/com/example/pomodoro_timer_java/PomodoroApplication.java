@@ -11,7 +11,7 @@ public class PomodoroApplication extends Application {
     public void start(Stage stage) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(PomodoroApplication.class.getResource("main-view.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 320, 250);
-        stage.setTitle("Pomodoro Timer by serifagir");
+        stage.setTitle("STimer");
         stage.setResizable(false);
         stage.setScene(scene);
         stage.show();

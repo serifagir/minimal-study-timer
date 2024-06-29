@@ -5,8 +5,12 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontPosture;
+import javafx.scene.text.FontWeight;
 import org.kordamp.ikonli.javafx.FontIcon;
 
+import java.lang.reflect.Array;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.prefs.Preferences;
@@ -34,6 +38,8 @@ public class PomodoroController {
     @FXML private int longBreakTime;
     @FXML private int sessionCount;
 
+    @FXML private Array sessionsArray;
+
     @FXML private boolean autoStartNextSession;
 
     @FXML private RadioButton autoStartRadioButton;
@@ -53,6 +59,8 @@ public class PomodoroController {
 
 
     public void initialize() {
+        timerLabel.setFont(Font.font("courier-new", FontWeight.BOLD, 64));
+
         studyTimeSlider.setValue(preferences.getInt("studyTimePrefValue", 25));
         studyTimeSliderLabel.setText(Integer.toString((int)studyTimeSlider.getValue()));
         studyTime = (int) studyTimeSlider.getValue();
@@ -130,7 +138,7 @@ public class PomodoroController {
                 });
                 skipSessionButton.setVisible(false);
             } else if (currentSessionCount % 2 == 1 && currentSessionCount != 2 * sessionCount - 1 ) {
-                seconds = shortBreakTime * 1;
+                seconds = shortBreakTime * 5;
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
@@ -140,7 +148,7 @@ public class PomodoroController {
                 });
                 skipSessionButton.setVisible(true);
             } else if (currentSessionCount == 2 * sessionCount - 1 ) {
-                seconds = longBreakTime * 1;
+                seconds = longBreakTime * 5;
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
@@ -173,7 +181,7 @@ public class PomodoroController {
         handleSessionCountBar((double)1/sessionCount);
         currentSessionCount++;
         sessionHandler();
-        if(autoStartNextSession) {
+        if(!autoStartNextSession) {
             isTimerRunning = false;
             timer.cancel();
             timer.purge();
@@ -274,7 +282,4 @@ public class PomodoroController {
         isTimerRunning = false;
         sessionHandler();
     }
-
-    @FXML protected void saveValueToDb() {}
-
 }
